@@ -1,0 +1,4 @@
+import os
+
+MAILGUN_API_KEY = os.getenv('CAPE_MAILGUN_API_KEY', 'REPLACEME')
+
