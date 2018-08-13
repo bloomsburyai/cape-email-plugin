@@ -8,9 +8,9 @@ import quotequail
 from functools import wraps
 
 from webservices.app.app_settings import URL_BASE, UI_URL
-from webservices.app.app_settings import app_email_endpoints
+from cape_email_plugin.email_settings import email_event_endpoints
 from logging import debug, warning
-from responder.responder_settings import MAILGUN_API_KEY, MAILGUN_DOMAIN, DEFAULT_EMAIL
+from cape_email_plugin.email_settings import MAILGUN_API_KEY, MAILGUN_DOMAIN, DEFAULT_EMAIL
 
 import requests
 from webservices.app.app_middleware import respond_with_json
@@ -22,7 +22,7 @@ from userdb.user import User
 from webservices.app.app_core import _answer as responder_answer
 from webservices.app.app_saved_reply_endpoints import _create_saved_reply as create_saved_reply
 
-_endpoint_route = lambda x: app_email_endpoints.route(URL_BASE + x, methods=['GET', 'POST'])
+_endpoint_route = lambda x: email_event_endpoints.route(URL_BASE + x, methods=['GET', 'POST'])
 
 _GREETINGS = {"hola", "hi", "dear", "hey", "hello", "morning", "afternoon", "evening","bonjour" }
 _BYES = {"thank", "bye", "regards", "cheers", "sincerely", "ciao", "best", "bgif", "soon", "cordially", "yours", "sent",
