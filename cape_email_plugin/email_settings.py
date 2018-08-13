@@ -1,8 +1,6 @@
 from sanic import Blueprint
 import os
 
-URL_BASE = '/email'
-
 email_event_endpoints = Blueprint('email_event_endpoints')
 
 MAILGUN_API_KEY = os.getenv('CAPE_MAILGUN_API_KEY', 'REPLACEME')
