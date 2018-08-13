@@ -14,7 +14,7 @@
 
 from cape.client import CapeClient, CapeException
 import pytest
-from cape_.tests.tests_settings import URL
+from cape_email_plugin.tests.tests_settings import URL
 from cape_webservices import webservices_settings
 
 API_URL = URL + '/api'
