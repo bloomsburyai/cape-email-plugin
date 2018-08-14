@@ -12,30 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Copyright 2018 BLEMUNDSBURY AI LIMITED
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import os
-import sys
-import subprocess
 from package_settings import NAME, VERSION, PACKAGES, DESCRIPTION
 from setuptools import setup
+from pathlib import Path
+import json
+import urllib.request
+from functools import lru_cache
 
-# TODO is there a better way ? dependencies seem to always require the version
-# Calling only at the egg_info step gives us the wanted depth first behavior
-if 'egg_info' in sys.argv and os.getenv('CAPE_DEPENDENCIES', 'False').lower() == 'true':
-    subprocess.check_call(['pip3', 'install','--no-warn-conflicts','--upgrade', '-r', 'requirements.txt'])
+
+@lru_cache(maxsize=50)
+def _get_github_sha(github_install_url: str):
+    """From the github_install_url get the hash of the latest commit"""
+    repository = Path(github_install_url).stem.split('#egg', 1)[0]
+    organisation = Path(github_install_url).parent.stem
+    with urllib.request.urlopen(f'https://api.github.com/repos/{organisation}/{repository}/commits/master') as response:
+        return json.loads(response.read())['sha']
+
 
 setup(
     name=NAME,
@@ -45,6 +37,25 @@ setup(
     author_email='contact@bloomsbury.ai',
     packages=PACKAGES,
     include_package_data=True,
+    install_requires=['Authomatic==0.1.0.post1',
+                      'beautifulsoup4==4.6.0',
+                      'markdown==2.6.11',
+                      'numexpr==2.6.5.dev0',
+                      'pytest==3.6.4',
+                      'peewee==3.5.2',
+                      'requests==2.18.1',
+                      'sanic==0.6.0',
+                      'cape_api_helpers==' + _get_github_sha(
+                          'git+https://github.com/bloomsburyai/cape-api-helpers#egg=cape_api_helpers'),
+                      'cape_webservices==' + _get_github_sha(
+                          'git+https://github.com/bloomsburyai/cape-webservices#egg=cape_webservices')
+                      ],
+    dependency_links=[
+        'git+https://github.com/bloomsburyai/cape-api-helpers#egg=cape_api_helpers-' + _get_github_sha(
+            'git+https://github.com/bloomsburyai/cape-api-helpers#egg=cape_api_helpers'),
+        'git+https://github.com/bloomsburyai/cape-webservices#egg=cape_webservices-' + _get_github_sha(
+            'git+https://github.com/bloomsburyai/cape-webservices#egg=cape_webservices')
+    ],
     package_data={
         '': ['*.*'],
     },
